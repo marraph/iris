@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class IrisApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IrisApplication.class, args);
+	void main() {
+		SpringApplication.run(IrisApplication.class);
 	}
 
 }
