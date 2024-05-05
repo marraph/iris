@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class IrisApplication {
 
-	void main() {
+	public static void main(String[] args) {
 		SpringApplication.run(IrisApplication.class);
 	}
 
