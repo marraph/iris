@@ -4,8 +4,10 @@ import com.marraph.iris.model.Auditable;
 import com.marraph.iris.model.data.Priority;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "projects")
 public final class Project extends Auditable {

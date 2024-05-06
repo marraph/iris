@@ -6,10 +6,12 @@ import com.marraph.iris.model.data.Status;
 import com.marraph.iris.model.organisation.Project;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "tasks")
 public final class Task extends Auditable {
