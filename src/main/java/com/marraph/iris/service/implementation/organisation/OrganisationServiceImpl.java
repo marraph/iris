@@ -6,35 +6,54 @@ import com.marraph.iris.repository.OrganisationRepository;
 import com.marraph.iris.service.organisation.OrganisationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
+
 @Service
-public class OrganisationServiceImpl implements OrganisationService {
+public final class OrganisationServiceImpl implements OrganisationService {
 
     private final OrganisationRepository organisationRepository;
+    private final ExampleMatcher modelMatcher;
 
     @Autowired
     public OrganisationServiceImpl(OrganisationRepository organisationRepository) {
         this.organisationRepository = organisationRepository;
+
+        this.modelMatcher = ExampleMatcher.matching()
+                .withIgnorePaths("id")
+                .withMatcher("name", ignoreCase());
     }
 
     @Override
     public CompletableFuture<Organisation> create(Organisation entity) {
-        return CompletableFuture.completedFuture(organisationRepository.save(entity));
+        return this.exists(entity).thenCompose(exists -> {
+            if (exists) return CompletableFuture.completedFuture(entity);
+            return CompletableFuture.completedFuture(organisationRepository.save(entity));
+        });
     }
 
     @Override
     public CompletableFuture<Organisation> update(Long id, Organisation updatedEntity) {
-        //TODO: CHECK IF ID EXISTS
-        //TODO: CHECK IF ENTRY WITH GIVEN PROPERTIES ALREADY EXISTS
+        CompletableFuture<Organisation> future = new CompletableFuture<>();
+        final var entry = organisationRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
+
+        entry.setName(updatedEntity.getName());
+        organisationRepository.save(entry);
+
+        future.complete(entry);
+        return future;
     }
 
     @Override
     public CompletableFuture<Optional<Organisation>> getById(Long id) {
-        return CompletableFuture.completedFuture(organisationRepository.findById(id));
+        return CompletableFuture.completedFuture(organisationRepository.findById(id).or(() -> {
+            throw new EntryNotFoundException(id);
+        }));
     }
 
     @Override
@@ -44,6 +63,6 @@ public class OrganisationServiceImpl implements OrganisationService {
 
     @Override
     public CompletableFuture<Boolean> exists(Organisation entity) {
-        return CompletableFuture.completedFuture(organisationRepository.exists(Example.of(entity)));
+        return CompletableFuture.completedFuture(organisationRepository.exists(Example.of(entity, modelMatcher)));
     }
 }
