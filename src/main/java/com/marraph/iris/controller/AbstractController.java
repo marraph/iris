@@ -24,15 +24,15 @@ public abstract class AbstractController<T> {
         return service.update(id, entity).thenApply(ResponseEntity::ok);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public CompletableFuture<ResponseEntity<T>> getEntityById(@PathVariable Long id) {
         return service.getById(id)
                 .thenApply(opt -> opt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build()));
     }
 
-    @DeleteMapping("/{id}")
-    public CompletableFuture<ResponseEntity<Boolean>> deleteEntity(@PathVariable Long id) {
-        return service.delete(id).thenApply(deleted -> deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build());
+    @DeleteMapping("/delete/{id}")
+    public void deleteEntity(@PathVariable Long id) {
+        service.delete(id);
     }
 
     @GetMapping("/exists")

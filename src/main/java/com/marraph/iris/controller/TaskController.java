@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public final class TaskController extends AbstractController<Task> {
 
     @Autowired
-    TaskController(TaskService service) {
-        super(service);
+    TaskController(TaskService taskService) {
+        super(taskService);
     }
 }

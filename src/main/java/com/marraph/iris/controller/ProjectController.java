@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public final class ProjectController extends AbstractController<Project> {
 
     @Autowired
-    ProjectController(ProjectService service) {
-        super(service);
+    ProjectController(ProjectService projectService) {
+        super(projectService);
     }
 }

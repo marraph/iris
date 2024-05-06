@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public final class OrganisationController extends AbstractController<Organisation> {
 
     @Autowired
-    OrganisationController(OrganisationService service) {
-        super(service);
+    OrganisationController(OrganisationService organisationService) {
+        super(organisationService);
     }
 }
