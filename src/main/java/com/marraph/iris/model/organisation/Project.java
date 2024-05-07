@@ -19,7 +19,6 @@ public final class Project extends Auditable {
     private String description;
 
     @OneToOne
-    @Column(nullable = false)
     private Team team;
 
     @Column(nullable = false)

@@ -22,11 +22,9 @@ public final class Task extends Auditable {
     private String description;
 
     @OneToOne
-    @Column(nullable = false)
     private Project project;
 
     @OneToOne
-    @Column(nullable = false)
     private Topic topic;
 
     @Column(nullable = false)

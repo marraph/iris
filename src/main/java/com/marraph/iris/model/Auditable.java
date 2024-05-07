@@ -5,8 +5,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.data.annotation.*;
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import org.springframework.data.jpa.domain.AbstractAuditable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
@@ -15,17 +14,6 @@ import java.util.Date;
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Auditable extends AbstractPersistable<Long> {
+public abstract class Auditable extends AbstractAuditable<User, Long> {
 
-    @CreatedBy
-    protected User createdBy;
-
-    @CreatedDate
-    protected Date createdDate;
-
-    @LastModifiedBy
-    protected User lastModifiedBy;
-
-    @LastModifiedDate
-    protected Date lastModifiedDate;
 }

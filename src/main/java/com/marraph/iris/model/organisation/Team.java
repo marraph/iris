@@ -15,7 +15,6 @@ public final class Team extends Auditable {
     private String name;
 
     @OneToOne
-    @Column(nullable = false)
     private Organisation description;
 
 }
