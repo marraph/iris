@@ -3,9 +3,6 @@ package com.marraph.iris.model.organisation;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.util.Date;
 
 @Getter
 @Setter
@@ -18,7 +15,7 @@ public final class User {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String name;
 
     @Column(nullable = false)
     private String password;
@@ -26,7 +23,4 @@ public final class User {
     @Column(nullable = false)
     private String email;
 
-    @CreationTimestamp
-    @GeneratedValue
-    private Date creationDate;
 }

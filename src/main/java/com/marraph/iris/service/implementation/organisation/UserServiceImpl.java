@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
@@ -43,8 +44,9 @@ public final class UserServiceImpl implements UserService {
         CompletableFuture<User> future = new CompletableFuture<>();
         final var entry = userRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
-        entry.setUsername(updatedEntity.getUsername());
-        entry.setEmail(updatedEntity.getEmail());
+        entry.setName(updatedEntity.getName());
+        entry.setEmail(entry.getEmail());
+        entry.setPassword(entry.getPassword());
         userRepository.save(entry);
 
         future.complete(entry);
