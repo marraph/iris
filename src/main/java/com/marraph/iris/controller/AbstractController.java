@@ -15,12 +15,12 @@ public abstract class AbstractController<T> {
     }
 
     @PostMapping("/create")
-    public CompletableFuture<ResponseEntity<T>> createEntity(T entity) {
+    public CompletableFuture<ResponseEntity<T>> createEntity(@RequestBody T entity) {
         return service.create(entity).thenApply(ResponseEntity::ok);
     }
 
     @PutMapping("/update/{id}")
-    public CompletableFuture<ResponseEntity<T>> updateEntity(@PathVariable Long id, T entity) {
+    public CompletableFuture<ResponseEntity<T>> updateEntity(@PathVariable Long id, @RequestBody T entity) {
         return service.update(id, entity).thenApply(ResponseEntity::ok);
     }
 
@@ -36,7 +36,7 @@ public abstract class AbstractController<T> {
     }
 
     @GetMapping("/exists")
-    public CompletableFuture<ResponseEntity<Boolean>> entityExists(T entity) {
+    public CompletableFuture<ResponseEntity<Boolean>> entityExists(@RequestBody T entity) {
         return service.exists(entity).thenApply(ResponseEntity::ok);
     }
 
