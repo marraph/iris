@@ -32,7 +32,12 @@ public final class TeamServiceImpl implements TeamService {
     @Override
     public CompletableFuture<Team> create(Team entity) {
         return this.exists(entity).thenCompose(exists -> {
-            if (exists) return CompletableFuture.completedFuture(entity);
+
+            if (exists) {
+                final var found = teamRepository.findOne(Example.of(entity, modelMatcher));
+                if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
+            }
+
             return CompletableFuture.completedFuture(teamRepository.save(entity));
         });
     }

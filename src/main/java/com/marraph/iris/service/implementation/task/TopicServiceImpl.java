@@ -33,7 +33,12 @@ public final class TopicServiceImpl implements TopicService {
     @Override
     public CompletableFuture<Topic> create(Topic entity) {
         return this.exists(entity).thenCompose(exists -> {
-            if (exists) return CompletableFuture.completedFuture(entity);
+
+            if (exists) {
+                final var found = topicRepository.findOne(Example.of(entity, modelMatcher));
+                if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
+            }
+
             return CompletableFuture.completedFuture(topicRepository.save(entity));
         });
     }

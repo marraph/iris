@@ -32,7 +32,12 @@ public final class ProjectServiceImpl implements ProjectService {
     @Override
     public CompletableFuture<Project> create(Project entity) {
         return this.exists(entity).thenCompose(exists -> {
-            if (exists) return CompletableFuture.completedFuture(entity);
+
+            if (exists) {
+                final var found = projectRepository.findOne(Example.of(entity, modelMatcher));
+                if (found.isPresent()) return CompletableFuture.completedFuture(entity);
+            }
+
             return CompletableFuture.completedFuture(projectRepository.save(entity));
         });
     }

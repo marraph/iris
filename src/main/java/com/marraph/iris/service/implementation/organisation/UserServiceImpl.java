@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
@@ -34,7 +33,12 @@ public final class UserServiceImpl implements UserService {
     @Override
     public CompletableFuture<User> create(User entity) {
         return this.exists(entity).thenCompose(exists -> {
-            if (exists) return CompletableFuture.completedFuture(entity);
+
+            if (!exists) {
+                final var found = userRepository.findOne(Example.of(entity, modelMatcher));
+                if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
+            }
+
             return CompletableFuture.completedFuture(userRepository.save(entity));
         });
     }

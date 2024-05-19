@@ -32,7 +32,12 @@ public final class OrganisationServiceImpl implements OrganisationService {
     @Override
     public CompletableFuture<Organisation> create(Organisation entity) {
         return this.exists(entity).thenCompose(exists -> {
-            if (exists) return CompletableFuture.completedFuture(entity);
+
+            if (exists) {
+                final var found = organisationRepository.findOne(Example.of(entity, modelMatcher));
+                if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
+            }
+
             return CompletableFuture.completedFuture(organisationRepository.save(entity));
         });
     }
