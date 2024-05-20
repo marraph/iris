@@ -8,8 +8,6 @@ import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.AbstractAuditable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MappedSuperclass
