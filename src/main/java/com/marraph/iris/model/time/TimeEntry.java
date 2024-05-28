@@ -18,6 +18,9 @@ import java.util.Date;
 public final class TimeEntry extends Auditable {
 
     @ManyToOne
+    private DailyEntry dailyEntry;
+
+    @ManyToOne
     private Task task;
 
     @Column(nullable = false)
@@ -25,5 +28,7 @@ public final class TimeEntry extends Auditable {
 
     @Column(nullable = false)
     private Date endDate;
+
+    private String comment;
 
 }
