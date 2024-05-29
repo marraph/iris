@@ -1,6 +1,7 @@
 package com.marraph.iris.model.time;
 
 import com.marraph.iris.model.Auditable;
+import com.marraph.iris.model.organisation.Project;
 import com.marraph.iris.model.task.Task;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,6 +23,9 @@ public final class TimeEntry extends Auditable {
 
     @ManyToOne
     private Task task;
+
+    @ManyToOne
+    private Project project;
 
     @Column(nullable = false)
     private Date startDate;
