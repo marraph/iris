@@ -27,18 +27,18 @@ public final class Task extends Auditable {
     @OneToOne
     private Topic topic;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Boolean isArchived;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Date duration;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Date deadline;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Status status;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Priority priority;
 }
