@@ -3,7 +3,7 @@ package com.marraph.iris.validation.times;
 import com.marraph.iris.model.time.TimeEntry;
 import lombok.experimental.UtilityClass;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
