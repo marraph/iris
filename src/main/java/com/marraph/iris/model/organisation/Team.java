@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -15,6 +17,9 @@ public final class Team extends Auditable {
     private String name;
 
     @OneToOne
-    private Organisation description;
+    private Organisation organisation;
+
+    @ManyToMany(mappedBy = "teams")
+    private Set<User> member;
 
 }
