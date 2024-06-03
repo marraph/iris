@@ -1,6 +1,6 @@
 package com.marraph.iris.repository;
 
-import com.marraph.iris.model.task.Topic;
+import com.marraph.iris.data.model.task.Topic;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

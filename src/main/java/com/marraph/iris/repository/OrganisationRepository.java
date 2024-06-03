@@ -1,6 +1,6 @@
 package com.marraph.iris.repository;
 
-import com.marraph.iris.model.organisation.Organisation;
+import com.marraph.iris.data.model.organisation.Organisation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

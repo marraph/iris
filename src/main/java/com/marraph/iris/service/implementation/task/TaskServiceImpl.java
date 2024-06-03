@@ -1,9 +1,9 @@
 package com.marraph.iris.service.implementation.task;
 
 import com.marraph.iris.exception.EntryNotFoundException;
-import com.marraph.iris.model.task.Task;
+import com.marraph.iris.data.model.task.Task;
 import com.marraph.iris.repository.TaskRepository;
-import com.marraph.iris.service.task.TaskService;
+import com.marraph.iris.service.plain.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
