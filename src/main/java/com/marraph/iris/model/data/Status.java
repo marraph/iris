@@ -1,4 +1,4 @@
-package com.marraph.iris.data.model.data;
+package com.marraph.iris.model.data;
 
 public enum Status {
     PENDING,

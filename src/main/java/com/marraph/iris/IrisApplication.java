@@ -8,6 +8,7 @@ public class IrisApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(IrisApplication.class);
+		System.out.println("Test123");
 	}
 
 }

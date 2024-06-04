@@ -1,7 +1,7 @@
-package com.marraph.iris.data.model.organisation;
+package com.marraph.iris.model.organisation;
 
-import com.marraph.iris.data.model.Auditable;
-import com.marraph.iris.data.model.data.Priority;
+import com.marraph.iris.model.Auditable;
+import com.marraph.iris.model.data.Priority;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

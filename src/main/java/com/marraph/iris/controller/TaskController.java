@@ -1,6 +1,6 @@
 package com.marraph.iris.controller;
 
-import com.marraph.iris.data.model.task.Task;
+import com.marraph.iris.model.task.Task;
 import com.marraph.iris.service.plain.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

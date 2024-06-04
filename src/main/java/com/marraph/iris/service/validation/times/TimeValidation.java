@@ -1,6 +1,6 @@
 package com.marraph.iris.service.validation.times;
 
-import com.marraph.iris.data.model.time.TimeEntry;
+import com.marraph.iris.model.time.TimeEntry;
 import com.marraph.iris.service.validation.times.data.FreeTimeTypes;
 import com.marraph.iris.service.validation.times.data.FreeTime;
 import lombok.experimental.UtilityClass;

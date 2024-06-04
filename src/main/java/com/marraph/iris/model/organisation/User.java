@@ -1,4 +1,4 @@
-package com.marraph.iris.data.model.organisation;
+package com.marraph.iris.model.organisation;
 
 import jakarta.persistence.*;
 import lombok.Getter;

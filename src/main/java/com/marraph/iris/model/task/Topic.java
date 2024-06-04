@@ -1,6 +1,6 @@
-package com.marraph.iris.data.model.task;
+package com.marraph.iris.model.task;
 
-import com.marraph.iris.data.model.Auditable;
+import com.marraph.iris.model.Auditable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
-package com.marraph.iris.data.model;
+package com.marraph.iris.model;
 
-import com.marraph.iris.data.model.organisation.User;
+import com.marraph.iris.model.organisation.PreviewUser;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
@@ -12,6 +12,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Auditable extends AbstractAuditable<User, Long> {
+public abstract class Auditable extends AbstractAuditable<PreviewUser, Long> {
 
 }

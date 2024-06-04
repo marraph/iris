@@ -1,8 +1,8 @@
-package com.marraph.iris.data.model.time;
+package com.marraph.iris.model.time;
 
-import com.marraph.iris.data.model.Auditable;
-import com.marraph.iris.data.model.organisation.Project;
-import com.marraph.iris.data.model.task.Task;
+import com.marraph.iris.model.Auditable;
+import com.marraph.iris.model.organisation.Project;
+import com.marraph.iris.model.task.Task;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;

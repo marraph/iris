@@ -1,7 +1,7 @@
 package com.marraph.iris.service.implementation.organisation;
 
 import com.marraph.iris.exception.EntryNotFoundException;
-import com.marraph.iris.data.model.organisation.Team;
+import com.marraph.iris.model.organisation.Team;
 import com.marraph.iris.repository.TeamRepository;
 import com.marraph.iris.service.plain.organisation.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;

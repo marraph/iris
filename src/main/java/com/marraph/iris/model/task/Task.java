@@ -1,9 +1,9 @@
-package com.marraph.iris.data.model.task;
+package com.marraph.iris.model.task;
 
-import com.marraph.iris.data.model.Auditable;
-import com.marraph.iris.data.model.data.Priority;
-import com.marraph.iris.data.model.data.Status;
-import com.marraph.iris.data.model.organisation.Project;
+import com.marraph.iris.model.Auditable;
+import com.marraph.iris.model.data.Priority;
+import com.marraph.iris.model.data.Status;
+import com.marraph.iris.model.organisation.Project;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
