@@ -3,7 +3,6 @@ package com.marraph.iris.model.task;
 import com.marraph.iris.model.Auditable;
 import com.marraph.iris.model.data.Priority;
 import com.marraph.iris.model.data.Status;
-import com.marraph.iris.model.organisation.Project;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,9 +19,6 @@ public final class Task extends Auditable {
     private String name;
 
     private String description;
-
-    @OneToOne
-    private Project project;
 
     @OneToOne
     private Topic topic;
