@@ -17,6 +17,11 @@ public final class Team extends Auditable {
     private String name;
 
     @ManyToOne
+    @JoinTable(
+            name = "teams_organisations",
+            joinColumns = @JoinColumn(name = "team_id"),
+            inverseJoinColumns = @JoinColumn(name = "organisation_id")
+    )
     private Organisation organisation;
 
     @OneToMany
