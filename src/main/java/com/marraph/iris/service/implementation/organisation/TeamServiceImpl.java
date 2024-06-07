@@ -2,6 +2,7 @@ package com.marraph.iris.service.implementation.organisation;
 
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Team;
+import com.marraph.iris.repository.OrganisationRepository;
 import com.marraph.iris.repository.TeamRepository;
 import com.marraph.iris.service.plain.organisation.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,13 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 @Service
 public final class TeamServiceImpl implements TeamService {
 
+    private final OrganisationRepository organisationRepository;
     private final TeamRepository teamRepository;
     private final ExampleMatcher modelMatcher;
 
     @Autowired
-    public TeamServiceImpl(TeamRepository teamRepository) {
+    public TeamServiceImpl(TeamRepository teamRepository, OrganisationRepository organisationRepository) {
+        this.organisationRepository = organisationRepository;
         this.teamRepository = teamRepository;
 
         this.modelMatcher = ExampleMatcher.matching()
@@ -79,5 +82,18 @@ public final class TeamServiceImpl implements TeamService {
     @Override
     public CompletableFuture<Boolean> exists(Team entity) {
         return CompletableFuture.completedFuture(teamRepository.exists(Example.of(entity, modelMatcher)));
+    }
+
+    @Override
+    public CompletableFuture<Optional<Team>> addToOrganisation(Long id, Long organisationId) {
+        final var organisation = this.organisationRepository.findById(organisationId);
+        if (organisation.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        final var entry = teamRepository.findById(id);
+        if (entry.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        entry.get().setOrganisation(organisation.get());
+        final var updatedTeam = teamRepository.save(entry.get());
+        return CompletableFuture.completedFuture(Optional.of(updatedTeam));
     }
 }

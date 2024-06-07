@@ -1,7 +1,5 @@
 package com.marraph.iris.service.plain.organisation;
 
-import com.marraph.iris.model.organisation.PreviewUser;
-import com.marraph.iris.model.organisation.Team;
 import com.marraph.iris.model.organisation.User;
 import com.marraph.iris.service.plain.AbstractService;
 import org.springframework.scheduling.annotation.Async;
@@ -18,4 +16,5 @@ public interface UserService extends AbstractService<User> {
 
     @Async
     CompletableFuture<Optional<User>> addToTeam(Long id, Long teamId);
+
 }
