@@ -109,14 +109,14 @@ public final class UserServiceImpl implements UserService {
     @Override
     public CompletableFuture<Optional<User>> addToTeam(Long id, Long teamId) {
         final var team = teamRepository.findById(teamId);
-        if (team.isPresent()) return CompletableFuture.completedFuture(Optional.empty());
+        if (team.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
 
         final var user = userRepository.findById(id);
         if (user.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
 
         user.get().getTeams().add(team.get());
-        userRepository.save(user.get());
+        final var updatedUser = userRepository.save(user.get());
 
-        return CompletableFuture.completedFuture(Optional.of(user.get()));
+        return CompletableFuture.completedFuture(Optional.of(updatedUser));
     }
 }
