@@ -52,6 +52,7 @@ public final class ProjectServiceImpl implements ProjectService {
         final var entry = projectRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setName(updatedEntity.getName());
+        entry.setLastModifiedDate(LocalDateTime.now());
         projectRepository.save(entry);
 
         future.complete(entry);

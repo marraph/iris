@@ -52,6 +52,7 @@ public final class TeamServiceImpl implements TeamService {
         final var entry = teamRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setName(updatedEntity.getName());
+        entry.setLastModifiedDate(LocalDateTime.now());
         teamRepository.save(entry);
 
         future.complete(entry);

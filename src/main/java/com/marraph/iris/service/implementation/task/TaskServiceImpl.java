@@ -58,6 +58,7 @@ public final class TaskServiceImpl implements TaskService {
         entry.setDeadline(updatedEntity.getDeadline());
         entry.setIsArchived(updatedEntity.getIsArchived());
         entry.setTopic(updatedEntity.getTopic());
+        entry.setLastModifiedDate(LocalDateTime.now());
         taskRepository.save(entry);
 
         future.complete(entry);

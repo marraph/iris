@@ -54,6 +54,7 @@ public final class TopicServiceImpl implements TopicService {
 
         entry.setTitle(updatedEntity.getTitle());
         entry.setHexCode(updatedEntity.getHexCode());
+        entry.setLastModifiedDate(LocalDateTime.now());
         topicRepository.save(entry);
 
         future.complete(entry);

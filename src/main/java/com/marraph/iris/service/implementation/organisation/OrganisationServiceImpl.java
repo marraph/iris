@@ -39,7 +39,7 @@ public final class OrganisationServiceImpl implements OrganisationService {
                 final var found = organisationRepository.findOne(Example.of(entity, modelMatcher));
                 if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
             }
-            
+
             entity.setCreatedDate(LocalDateTime.now());
             entity.setLastModifiedDate(LocalDateTime.now());
             return CompletableFuture.completedFuture(organisationRepository.save(entity));
@@ -52,6 +52,7 @@ public final class OrganisationServiceImpl implements OrganisationService {
         final var entry = organisationRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setName(updatedEntity.getName());
+        entry.setLastModifiedDate(LocalDateTime.now());
         organisationRepository.save(entry);
 
         future.complete(entry);
