@@ -14,4 +14,7 @@ public interface TeamService extends AbstractService<Team> {
     @Async
     CompletableFuture<Optional<Team>> addToOrganisation(Long id, Long organisationId);
 
+    @Async
+    CompletableFuture<Optional<Team>> addProject(Long id, Long organisationId);
+
 }

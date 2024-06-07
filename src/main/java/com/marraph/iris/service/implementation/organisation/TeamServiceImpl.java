@@ -3,6 +3,7 @@ package com.marraph.iris.service.implementation.organisation;
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Team;
 import com.marraph.iris.repository.OrganisationRepository;
+import com.marraph.iris.repository.ProjectRepository;
 import com.marraph.iris.repository.TeamRepository;
 import com.marraph.iris.service.plain.organisation.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,14 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 public final class TeamServiceImpl implements TeamService {
 
     private final OrganisationRepository organisationRepository;
+    private final ProjectRepository projectRepository;
     private final TeamRepository teamRepository;
     private final ExampleMatcher modelMatcher;
 
     @Autowired
-    public TeamServiceImpl(TeamRepository teamRepository, OrganisationRepository organisationRepository) {
+    public TeamServiceImpl(TeamRepository teamRepository, OrganisationRepository organisationRepository, ProjectRepository projectRepository) {
         this.organisationRepository = organisationRepository;
+        this.projectRepository = projectRepository;
         this.teamRepository = teamRepository;
 
         this.modelMatcher = ExampleMatcher.matching()
@@ -93,6 +96,19 @@ public final class TeamServiceImpl implements TeamService {
         if (entry.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
 
         entry.get().setOrganisation(organisation.get());
+        final var updatedTeam = teamRepository.save(entry.get());
+        return CompletableFuture.completedFuture(Optional.of(updatedTeam));
+    }
+
+    @Override
+    public CompletableFuture<Optional<Team>> addProject(Long id, Long projectId) {
+        final var project = this.projectRepository.findById(projectId);
+        if (project.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        final var entry = teamRepository.findById(id);
+        if (entry.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        entry.get().getProjects().add(project.get());
         final var updatedTeam = teamRepository.save(entry.get());
         return CompletableFuture.completedFuture(Optional.of(updatedTeam));
     }

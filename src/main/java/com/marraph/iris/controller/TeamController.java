@@ -23,9 +23,18 @@ public final class TeamController extends AbstractController<Team> {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping("/add/{id}:{organisationId}")
-    public CompletableFuture<ResponseEntity<Team>> createEntity(@PathVariable Long id, @PathVariable Long organisationId) {
+    @PostMapping("/set/organisation/{id}:{organisationId}")
+    public CompletableFuture<ResponseEntity<Team>> setOrganisation(@PathVariable Long id, @PathVariable Long organisationId) {
         return teamService.addToOrganisation(id, organisationId).thenApply(team -> {
+            if (team.isEmpty()) throw new EntryNotFoundException();
+            else return ResponseEntity.ok(team.get());
+        });
+    }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/add/project/{id}:{projectId}")
+    public CompletableFuture<ResponseEntity<Team>> addProject(@PathVariable Long id, @PathVariable Long projectId) {
+        return teamService.addProject(id, projectId).thenApply(team -> {
             if (team.isEmpty()) throw new EntryNotFoundException();
             else return ResponseEntity.ok(team.get());
         });
