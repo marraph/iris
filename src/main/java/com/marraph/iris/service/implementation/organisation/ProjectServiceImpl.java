@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -59,6 +60,11 @@ public final class ProjectServiceImpl implements ProjectService {
         return CompletableFuture.completedFuture(projectRepository.findById(id).or(() -> {
             throw new EntryNotFoundException(id);
         }));
+    }
+
+    @Override
+    public CompletableFuture<List<Project>> getAll() {
+        return CompletableFuture.completedFuture(projectRepository.findAll());
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -65,6 +66,11 @@ public final class TaskServiceImpl implements TaskService {
         return CompletableFuture.completedFuture(taskRepository.findById(id).or(() -> {
             throw new EntryNotFoundException(id);
         }));
+    }
+
+    @Override
+    public CompletableFuture<List<Task>> getAll() {
+        return CompletableFuture.completedFuture(taskRepository.findAll());
     }
 
     @Override

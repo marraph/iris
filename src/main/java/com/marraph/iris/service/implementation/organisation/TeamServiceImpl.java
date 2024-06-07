@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -59,6 +60,11 @@ public final class TeamServiceImpl implements TeamService {
         return CompletableFuture.completedFuture(teamRepository.findById(id).or(() -> {
             throw new EntryNotFoundException(id);
         }));
+    }
+
+    @Override
+    public CompletableFuture<List<Team>> getAll() {
+        return CompletableFuture.completedFuture(teamRepository.findAll());
     }
 
     @Override

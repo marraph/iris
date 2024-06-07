@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -61,6 +62,11 @@ public final class TopicServiceImpl implements TopicService {
         return CompletableFuture.completedFuture(topicRepository.findById(id).or(() -> {
             throw new EntryNotFoundException(id);
         }));
+    }
+
+    @Override
+    public CompletableFuture<List<Topic>> getAll() {
+        return CompletableFuture.completedFuture(topicRepository.findAll());
     }
 
     @Override
