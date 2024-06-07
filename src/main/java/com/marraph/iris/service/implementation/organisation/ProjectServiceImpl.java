@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +40,8 @@ public final class ProjectServiceImpl implements ProjectService {
                 if (found.isPresent()) return CompletableFuture.completedFuture(entity);
             }
 
+            entity.setCreatedDate(LocalDateTime.now());
+            entity.setLastModifiedDate(LocalDateTime.now());
             return CompletableFuture.completedFuture(projectRepository.save(entity));
         });
     }
