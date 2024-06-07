@@ -3,6 +3,7 @@ package com.marraph.iris.service.implementation.organisation;
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Project;
 import com.marraph.iris.repository.ProjectRepository;
+import com.marraph.iris.repository.TaskRepository;
 import com.marraph.iris.service.plain.organisation.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -20,11 +21,13 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 public final class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final TaskRepository taskRepository;
     private final ExampleMatcher modelMatcher;
 
     @Autowired
-    public ProjectServiceImpl(ProjectRepository projectRepository) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, TaskRepository taskRepository) {
         this.projectRepository = projectRepository;
+        this.taskRepository = taskRepository;
 
         this.modelMatcher = ExampleMatcher.matching()
                 .withIgnorePaths("id")
@@ -79,5 +82,18 @@ public final class ProjectServiceImpl implements ProjectService {
     @Override
     public CompletableFuture<Boolean> exists(Project entity) {
         return CompletableFuture.completedFuture(projectRepository.exists(Example.of(entity, modelMatcher)));
+    }
+
+    @Override
+    public CompletableFuture<Optional<Project>> addTask(Long id, Long taskId) {
+        final var task = this.taskRepository.findById(taskId);
+        if (task.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        final var entry = projectRepository.findById(id);
+        if (entry.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        entry.get().getTasks().add(task.get());
+        final var updatedProject = projectRepository.save(entry.get());
+        return CompletableFuture.completedFuture(Optional.of(updatedProject));
     }
 }
