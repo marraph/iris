@@ -1,6 +1,7 @@
 package com.marraph.iris.model.organisation;
 
 import com.marraph.iris.model.Auditable;
+import com.marraph.iris.model.task.Topic;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,4 +32,13 @@ public final class Team extends Auditable {
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
     private Set<Project> projects;
+
+    @OneToMany
+    @JoinTable(
+            name = "team_topics",
+            joinColumns = @JoinColumn(name = "team_id"),
+            inverseJoinColumns = @JoinColumn(name = "topic_id")
+    )
+    private Set<Topic> topics;
+
 }
