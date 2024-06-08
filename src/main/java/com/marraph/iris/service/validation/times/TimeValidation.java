@@ -6,10 +6,7 @@ import com.marraph.iris.service.validation.times.data.FreeTime;
 import lombok.experimental.UtilityClass;
 import org.antlr.v4.runtime.misc.Pair;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -65,8 +62,8 @@ public class TimeValidation {
         return results;
     }
 
-    private int getFreeTimeMinutes(FreeTime freeTime) {
-        return freeTime.endDate().getMinutes() - freeTime.startDate().getMinutes();
+    private long getFreeTimeMinutes(FreeTime freeTime) {
+        return (freeTime.endDate().getTime() - freeTime.startDate().getTime()) / 100 / 60;
     }
 
     private List<Pair<TimeEntry, TimeEntry>> getPossibleCombinations(List<TimeEntry> items) {

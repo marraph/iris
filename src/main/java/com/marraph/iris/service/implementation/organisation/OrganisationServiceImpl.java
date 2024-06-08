@@ -9,6 +9,8 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,6 +40,8 @@ public final class OrganisationServiceImpl implements OrganisationService {
                 if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
             }
 
+            entity.setCreatedDate(LocalDateTime.now());
+            entity.setLastModifiedDate(LocalDateTime.now());
             return CompletableFuture.completedFuture(organisationRepository.save(entity));
         });
     }
@@ -48,6 +52,7 @@ public final class OrganisationServiceImpl implements OrganisationService {
         final var entry = organisationRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setName(updatedEntity.getName());
+        entry.setLastModifiedDate(LocalDateTime.now());
         organisationRepository.save(entry);
 
         future.complete(entry);
@@ -59,6 +64,11 @@ public final class OrganisationServiceImpl implements OrganisationService {
         return CompletableFuture.completedFuture(organisationRepository.findById(id).or(() -> {
             throw new EntryNotFoundException(id);
         }));
+    }
+
+    @Override
+    public CompletableFuture<List<Organisation>> getAll() {
+        return CompletableFuture.completedFuture(organisationRepository.findAll());
     }
 
     @Override

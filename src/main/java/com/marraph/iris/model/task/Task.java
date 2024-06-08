@@ -1,5 +1,6 @@
 package com.marraph.iris.model.task;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.marraph.iris.model.Auditable;
 import com.marraph.iris.model.data.Priority;
 import com.marraph.iris.model.data.Status;
@@ -7,7 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,21 +21,23 @@ public final class Task extends Auditable {
 
     private String description;
 
-    @OneToOne
+    @ManyToOne
     private Topic topic;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Boolean isArchived;
 
-    @Column(nullable = false, unique = true)
-    private Date duration;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
+    @Column(nullable = false)
+    private LocalDateTime duration;
 
-    @Column(nullable = false, unique = true)
-    private Date deadline;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
+    @Column(nullable = false)
+    private LocalDateTime deadline;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Status status;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Priority priority;
 }

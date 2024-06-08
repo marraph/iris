@@ -9,6 +9,8 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -26,21 +28,18 @@ public final class TaskServiceImpl implements TaskService {
 
         this.modelMatcher = ExampleMatcher.matching()
                 .withIgnorePaths("id")
+                .withIgnorePaths("topics")
+                .withIgnorePaths("topic_id")
                 .withMatcher("name", ignoreCase())
                 .withMatcher("description", ignoreCase());
     }
 
     @Override
     public CompletableFuture<Task> create(Task entity) {
-        return this.exists(entity).thenCompose(exists -> {
+        entity.setCreatedDate(LocalDateTime.now());
+        entity.setLastModifiedDate(LocalDateTime.now());
 
-            if (exists) {
-                final var found = taskRepository.findOne(Example.of(entity, modelMatcher));
-                if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
-            }
-
-            return CompletableFuture.completedFuture(taskRepository.save(entity));
-        });
+        return CompletableFuture.completedFuture(taskRepository.save(entity));
     }
 
     @Override
@@ -54,6 +53,7 @@ public final class TaskServiceImpl implements TaskService {
         entry.setDeadline(updatedEntity.getDeadline());
         entry.setIsArchived(updatedEntity.getIsArchived());
         entry.setTopic(updatedEntity.getTopic());
+        entry.setLastModifiedDate(LocalDateTime.now());
         taskRepository.save(entry);
 
         future.complete(entry);
@@ -65,6 +65,11 @@ public final class TaskServiceImpl implements TaskService {
         return CompletableFuture.completedFuture(taskRepository.findById(id).or(() -> {
             throw new EntryNotFoundException(id);
         }));
+    }
+
+    @Override
+    public CompletableFuture<List<Task>> getAll() {
+        return CompletableFuture.completedFuture(taskRepository.findAll());
     }
 
     @Override

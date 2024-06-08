@@ -9,6 +9,8 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -39,6 +41,8 @@ public final class TopicServiceImpl implements TopicService {
                 if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
             }
 
+            entity.setCreatedDate(LocalDateTime.now());
+            entity.setLastModifiedDate(LocalDateTime.now());
             return CompletableFuture.completedFuture(topicRepository.save(entity));
         });
     }
@@ -50,6 +54,7 @@ public final class TopicServiceImpl implements TopicService {
 
         entry.setTitle(updatedEntity.getTitle());
         entry.setHexCode(updatedEntity.getHexCode());
+        entry.setLastModifiedDate(LocalDateTime.now());
         topicRepository.save(entry);
 
         future.complete(entry);
@@ -61,6 +66,11 @@ public final class TopicServiceImpl implements TopicService {
         return CompletableFuture.completedFuture(topicRepository.findById(id).or(() -> {
             throw new EntryNotFoundException(id);
         }));
+    }
+
+    @Override
+    public CompletableFuture<List<Topic>> getAll() {
+        return CompletableFuture.completedFuture(topicRepository.findAll());
     }
 
     @Override

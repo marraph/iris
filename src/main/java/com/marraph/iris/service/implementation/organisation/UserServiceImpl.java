@@ -3,6 +3,7 @@ package com.marraph.iris.service.implementation.organisation;
 import com.marraph.iris.exception.EmailInUseException;
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.User;
+import com.marraph.iris.repository.TeamRepository;
 import com.marraph.iris.repository.UserRepository;
 import com.marraph.iris.service.plain.organisation.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,13 +20,15 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 @Service
 public final class UserServiceImpl implements UserService {
 
+    private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final ExampleMatcher modelMatcher;
     private final ExampleMatcher emailMatcher;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, TeamRepository teamRepository) {
         this.userRepository = userRepository;
+        this.teamRepository = teamRepository;
 
         this.modelMatcher = ExampleMatcher.matching()
                 .withIgnorePaths("id")
@@ -40,7 +44,7 @@ public final class UserServiceImpl implements UserService {
     public CompletableFuture<User> create(User entity) {
 
         this.emailInUse(entity).thenAccept(IsAlreadyInUse -> {
-           if (IsAlreadyInUse) throw new EmailInUseException(entity.getEmail());
+            if (IsAlreadyInUse) throw new EmailInUseException(entity.getEmail());
         });
 
         return this.exists(entity).thenCompose(exists -> {
@@ -81,6 +85,11 @@ public final class UserServiceImpl implements UserService {
     }
 
     @Override
+    public CompletableFuture<List<User>> getAll() {
+        return CompletableFuture.completedFuture(userRepository.findAll());
+    }
+
+    @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
@@ -93,5 +102,19 @@ public final class UserServiceImpl implements UserService {
     @Override
     public CompletableFuture<Boolean> emailInUse(User entity) {
         return CompletableFuture.completedFuture(userRepository.exists(Example.of(entity, emailMatcher)));
+    }
+
+    @Override
+    public CompletableFuture<Optional<User>> addToTeam(Long id, Long teamId) {
+        final var team = teamRepository.findById(teamId);
+        if (team.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        final var user = userRepository.findById(id);
+        if (user.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        user.get().getTeams().add(team.get());
+        final var updatedUser = userRepository.save(user.get());
+
+        return CompletableFuture.completedFuture(Optional.of(updatedUser));
     }
 }
