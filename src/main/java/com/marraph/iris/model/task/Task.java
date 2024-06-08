@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -29,11 +29,11 @@ public final class Task extends Auditable {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
     @Column(nullable = false)
-    private Date duration;
+    private LocalDateTime duration;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
     @Column(nullable = false)
-    private Date deadline;
+    private LocalDateTime deadline;
 
     @Column(nullable = false)
     private Status status;
