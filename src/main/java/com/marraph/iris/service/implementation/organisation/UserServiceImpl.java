@@ -2,8 +2,6 @@ package com.marraph.iris.service.implementation.organisation;
 
 import com.marraph.iris.exception.EmailInUseException;
 import com.marraph.iris.exception.EntryNotFoundException;
-import com.marraph.iris.model.organisation.PreviewUser;
-import com.marraph.iris.model.organisation.Team;
 import com.marraph.iris.model.organisation.User;
 import com.marraph.iris.repository.TeamRepository;
 import com.marraph.iris.repository.UserRepository;
