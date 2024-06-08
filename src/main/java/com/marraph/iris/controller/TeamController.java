@@ -1,12 +1,15 @@
 package com.marraph.iris.controller;
 
 import com.marraph.iris.exception.EntryNotFoundException;
+import com.marraph.iris.model.organisation.Project;
 import com.marraph.iris.model.organisation.Team;
+import com.marraph.iris.model.task.Topic;
 import com.marraph.iris.service.plain.organisation.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RequestMapping(path = "/api/v1/team")
@@ -40,4 +43,24 @@ public final class TeamController extends AbstractController<Team> {
         });
     }
 
+    @CrossOrigin(origins = "*")
+    @PostMapping("/add/topic/{id}:{topicId}")
+    public CompletableFuture<ResponseEntity<Team>> addTopic(@PathVariable Long id, @PathVariable Long topicId) {
+        return teamService.addTopic(id, topicId).thenApply(team -> {
+            if (team.isEmpty()) throw new EntryNotFoundException();
+            else return ResponseEntity.ok(team.get());
+        });
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/get/projects({id}")
+    public CompletableFuture<ResponseEntity<List<Project>>> getProjects(@PathVariable Long id) {
+        return teamService.getProjects(id).thenApply(ResponseEntity::ok);
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/get/topic({id}")
+    public CompletableFuture<ResponseEntity<List<Topic>>> getTopics(@PathVariable Long id) {
+        return teamService.getTopics(id).thenApply(ResponseEntity::ok);
+    }
 }

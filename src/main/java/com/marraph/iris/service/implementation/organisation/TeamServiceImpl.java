@@ -1,10 +1,13 @@
 package com.marraph.iris.service.implementation.organisation;
 
 import com.marraph.iris.exception.EntryNotFoundException;
+import com.marraph.iris.model.organisation.Project;
 import com.marraph.iris.model.organisation.Team;
+import com.marraph.iris.model.task.Topic;
 import com.marraph.iris.repository.OrganisationRepository;
 import com.marraph.iris.repository.ProjectRepository;
 import com.marraph.iris.repository.TeamRepository;
+import com.marraph.iris.repository.TopicRepository;
 import com.marraph.iris.service.plain.organisation.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -12,6 +15,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -23,13 +27,15 @@ public final class TeamServiceImpl implements TeamService {
 
     private final OrganisationRepository organisationRepository;
     private final ProjectRepository projectRepository;
+    private final TopicRepository topicRepository;
     private final TeamRepository teamRepository;
     private final ExampleMatcher modelMatcher;
 
     @Autowired
-    public TeamServiceImpl(TeamRepository teamRepository, OrganisationRepository organisationRepository, ProjectRepository projectRepository) {
+    public TeamServiceImpl(TeamRepository teamRepository, OrganisationRepository organisationRepository, ProjectRepository projectRepository, TopicRepository topicRepository) {
         this.organisationRepository = organisationRepository;
         this.projectRepository = projectRepository;
+        this.topicRepository = topicRepository;
         this.teamRepository = teamRepository;
 
         this.modelMatcher = ExampleMatcher.matching()
@@ -111,5 +117,33 @@ public final class TeamServiceImpl implements TeamService {
         entry.get().getProjects().add(project.get());
         final var updatedTeam = teamRepository.save(entry.get());
         return CompletableFuture.completedFuture(Optional.of(updatedTeam));
+    }
+
+    @Override
+    public CompletableFuture<Optional<Team>> addTopic(Long id, Long topicId) {
+        final var topic = this.topicRepository.findById(topicId);
+        if (topic.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        final var entry = teamRepository.findById(id);
+        if (entry.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+
+        entry.get().getTopics().add(topic.get());
+        final var updatedTeam = teamRepository.save(entry.get());
+        return CompletableFuture.completedFuture(Optional.of(updatedTeam));
+    }
+
+    @Override
+    public CompletableFuture<List<Project>> getProjects(Long id) {
+        final var optionalTeam = teamRepository.findById(id);
+        if (optionalTeam.isEmpty()) throw new EntryNotFoundException(id);
+        return CompletableFuture.completedFuture(optionalTeam.get().getProjects().stream().toList());
+    }
+
+    @Override
+    public CompletableFuture<List<Topic>> getTopics(Long id) {
+        final var optionalTeam = teamRepository.findById(id);
+        if (optionalTeam.isEmpty()) throw new EntryNotFoundException(id);
+        return CompletableFuture.completedFuture(optionalTeam.get().getTopics().stream().toList());
+
     }
 }
