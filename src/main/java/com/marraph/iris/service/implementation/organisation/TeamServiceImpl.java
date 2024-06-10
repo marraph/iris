@@ -58,8 +58,10 @@ public final class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public CompletableFuture<Team> update(Long id, Team updatedEntity) {
+    public CompletableFuture<Team> update(Team updatedEntity) {
         CompletableFuture<Team> future = new CompletableFuture<>();
+        final var id = updatedEntity.getId();
+        if (id == null) throw new IllegalArgumentException("ID is null");
         final var entry = teamRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setName(updatedEntity.getName());

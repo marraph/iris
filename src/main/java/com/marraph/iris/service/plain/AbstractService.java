@@ -12,7 +12,7 @@ public interface AbstractService <T> {
     CompletableFuture<T> create(T entity);
 
     @Async
-    CompletableFuture<T> update(Long id, T updatedEntity);
+    CompletableFuture<T> update(T updatedEntity);
 
     @Async
     CompletableFuture<Optional<T>> getById(Long id);

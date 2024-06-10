@@ -59,13 +59,14 @@ public final class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CompletableFuture<User> update(Long id, User updatedEntity) {
+    public CompletableFuture<User> update(User updatedEntity) {
 
         this.emailInUse(updatedEntity).thenAccept(IsAlreadyInUse -> {
             if (IsAlreadyInUse) throw new EmailInUseException(updatedEntity.getEmail());
         });
 
         CompletableFuture<User> future = new CompletableFuture<>();
+        final var id = updatedEntity.getId();
         final var entry = userRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setName(updatedEntity.getName());

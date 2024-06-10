@@ -48,8 +48,11 @@ public final class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public CompletableFuture<Topic> update(Long id, Topic updatedEntity) {
+    public CompletableFuture<Topic> update(Topic updatedEntity) {
         CompletableFuture<Topic> future = new CompletableFuture<>();
+        final var id = updatedEntity.getId();
+
+        if (id == null) throw new IllegalArgumentException("ID is null");
         final var entry = topicRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setTitle(updatedEntity.getTitle());

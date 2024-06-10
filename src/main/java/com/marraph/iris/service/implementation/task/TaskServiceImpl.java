@@ -43,8 +43,10 @@ public final class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public CompletableFuture<Task> update(Long id, Task updatedEntity) {
+    public CompletableFuture<Task> update(Task updatedEntity) {
         CompletableFuture<Task> future = new CompletableFuture<>();
+        final var id = updatedEntity.getId();
+        if (id == null) throw new IllegalArgumentException("ID is null");
         final var entry = taskRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setName(updatedEntity.getName());

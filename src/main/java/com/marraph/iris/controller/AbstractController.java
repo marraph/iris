@@ -22,9 +22,9 @@ public abstract class AbstractController<T> {
     }
 
     @CrossOrigin(origins = "*")
-    @PutMapping("/update/{id}")
-    public CompletableFuture<ResponseEntity<T>> updateEntity(@PathVariable Long id, @RequestBody T entity) {
-        return service.update(id, entity).thenApply(ResponseEntity::ok);
+    @PutMapping("/update/")
+    public CompletableFuture<ResponseEntity<T>> updateEntity(@RequestBody T entity) {
+        return service.update(entity).thenApply(ResponseEntity::ok);
     }
 
     @CrossOrigin(origins = "*")
