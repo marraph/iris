@@ -26,9 +26,7 @@ public final class OrganisationServiceImpl implements OrganisationService {
     public OrganisationServiceImpl(OrganisationRepository organisationRepository) {
         this.organisationRepository = organisationRepository;
 
-        this.modelMatcher = ExampleMatcher.matching()
-                .withIgnorePaths("id")
-                .withMatcher("name", ignoreCase());
+        this.modelMatcher = ExampleMatcher.matching().withIgnorePaths("id").withMatcher("name", ignoreCase());
     }
 
     @Override
@@ -47,8 +45,10 @@ public final class OrganisationServiceImpl implements OrganisationService {
     }
 
     @Override
-    public CompletableFuture<Organisation> update(Long id, Organisation updatedEntity) {
+    public CompletableFuture<Organisation> update(Organisation updatedEntity) {
         CompletableFuture<Organisation> future = new CompletableFuture<>();
+        final var id = updatedEntity.getId();
+        if (id == null) throw new IllegalArgumentException("ID is null");
         final var entry = organisationRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setName(updatedEntity.getName());

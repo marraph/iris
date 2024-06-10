@@ -50,8 +50,11 @@ public final class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public CompletableFuture<Project> update(Long id, Project updatedEntity) {
+    public CompletableFuture<Project> update(Project updatedEntity) {
         CompletableFuture<Project> future = new CompletableFuture<>();
+        final var id = updatedEntity.getId();
+
+        if (id == null) throw new IllegalArgumentException("ID is null");
         final var entry = projectRepository.findById(id).orElseThrow(() -> new EntryNotFoundException(id));
 
         entry.setName(updatedEntity.getName());
