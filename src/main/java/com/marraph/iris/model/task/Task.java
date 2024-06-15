@@ -27,9 +27,8 @@ public final class Task extends Auditable {
     @Column(nullable = false)
     private Boolean isArchived;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
     @Column(nullable = false)
-    private LocalDateTime duration;
+    private Float duration;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
     @Column(nullable = false)
