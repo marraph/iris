@@ -6,5 +6,4 @@ public enum Status {
     STARTED,
     TESTED,
     FINISHED,
-    ARCHIVED
 }
