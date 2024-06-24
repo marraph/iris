@@ -12,6 +12,6 @@ import java.util.concurrent.CompletableFuture;
 public interface ProjectService extends AbstractService<Project> {
 
     @Async
-    CompletableFuture<Optional<Project>> addTask(Long id, Long taskId);
+    CompletableFuture<Project> create(Project entity, Long teamId);
 
 }

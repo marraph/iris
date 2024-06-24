@@ -9,9 +9,6 @@ import java.util.concurrent.CompletableFuture;
 public interface AbstractService <T> {
 
     @Async
-    CompletableFuture<T> create(T entity);
-
-    @Async
     CompletableFuture<T> update(T updatedEntity);
 
     @Async
