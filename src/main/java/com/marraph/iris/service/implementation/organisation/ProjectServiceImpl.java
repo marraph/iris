@@ -1,9 +1,10 @@
 package com.marraph.iris.service.implementation.organisation;
 
+import com.marraph.iris.exception.ConnectEntryException;
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Project;
 import com.marraph.iris.repository.ProjectRepository;
-import com.marraph.iris.repository.TaskRepository;
+import com.marraph.iris.repository.TeamRepository;
 import com.marraph.iris.service.plain.organisation.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -21,32 +22,17 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 public final class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final TaskRepository taskRepository;
+    private final TeamRepository teamRepository;
     private final ExampleMatcher modelMatcher;
 
     @Autowired
-    public ProjectServiceImpl(ProjectRepository projectRepository, TaskRepository taskRepository) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, TeamRepository teamRepository) {
         this.projectRepository = projectRepository;
-        this.taskRepository = taskRepository;
+        this.teamRepository = teamRepository;
 
         this.modelMatcher = ExampleMatcher.matching()
                 .withIgnorePaths("id")
                 .withMatcher("name", ignoreCase());
-    }
-
-    @Override
-    public CompletableFuture<Project> create(Project entity) {
-        return this.exists(entity).thenCompose(exists -> {
-
-            if (exists) {
-                final var found = projectRepository.findOne(Example.of(entity, modelMatcher));
-                if (found.isPresent()) return CompletableFuture.completedFuture(entity);
-            }
-
-            entity.setCreatedDate(LocalDateTime.now());
-            entity.setLastModifiedDate(LocalDateTime.now());
-            return CompletableFuture.completedFuture(projectRepository.save(entity));
-        });
     }
 
     @Override
@@ -88,15 +74,33 @@ public final class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public CompletableFuture<Optional<Project>> addTask(Long id, Long taskId) {
-        final var task = this.taskRepository.findById(taskId);
-        if (task.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+    public CompletableFuture<Project> create(Project entity, Long teamId) {
+        final var result = this.create(entity);
 
-        final var entry = projectRepository.findById(id);
-        if (entry.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
-
-        entry.get().getTasks().add(task.get());
-        final var updatedProject = projectRepository.save(entry.get());
-        return CompletableFuture.completedFuture(Optional.of(updatedProject));
+        result.thenAccept(project -> addProject(entity, teamId));
+        return result;
     }
+
+    private CompletableFuture<Project> create(Project entity) {
+        return this.exists(entity).thenCompose(exists -> {
+
+            if (exists) {
+                final var found = projectRepository.findOne(Example.of(entity, modelMatcher));
+                if (found.isPresent()) return CompletableFuture.completedFuture(entity);
+            }
+
+            entity.setCreatedDate(LocalDateTime.now());
+            entity.setLastModifiedDate(LocalDateTime.now());
+            return CompletableFuture.completedFuture(projectRepository.save(entity));
+        });
+    }
+
+    public void addProject(Project project, Long teamId) {
+        final var entry = teamRepository.findById(teamId);
+        if (entry.isEmpty()) throw new ConnectEntryException("Team not found");
+
+        entry.get().getProjects().add(project);
+        teamRepository.save(entry.get());
+    }
+
 }

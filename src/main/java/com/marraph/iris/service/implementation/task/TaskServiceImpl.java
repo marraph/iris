@@ -2,7 +2,9 @@ package com.marraph.iris.service.implementation.task;
 
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.task.Task;
+import com.marraph.iris.repository.ProjectRepository;
 import com.marraph.iris.repository.TaskRepository;
+import com.marraph.iris.repository.UserRepository;
 import com.marraph.iris.service.plain.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -19,11 +21,13 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 @Service
 public final class TaskServiceImpl implements TaskService {
 
+    private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final ExampleMatcher modelMatcher;
 
     @Autowired
-    public TaskServiceImpl(TaskRepository taskRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
 
         this.modelMatcher = ExampleMatcher.matching()
@@ -32,14 +36,6 @@ public final class TaskServiceImpl implements TaskService {
                 .withIgnorePaths("topic_id")
                 .withMatcher("name", ignoreCase())
                 .withMatcher("description", ignoreCase());
-    }
-
-    @Override
-    public CompletableFuture<Task> create(Task entity) {
-        entity.setCreatedDate(LocalDateTime.now());
-        entity.setLastModifiedDate(LocalDateTime.now());
-
-        return CompletableFuture.completedFuture(taskRepository.save(entity));
     }
 
     @Override
@@ -82,5 +78,24 @@ public final class TaskServiceImpl implements TaskService {
     @Override
     public CompletableFuture<Boolean> exists(Task entity) {
         return CompletableFuture.completedFuture(taskRepository.exists(Example.of(entity, modelMatcher)));
+    }
+
+    @Override
+    public CompletableFuture<Task> create(Task entity, Long projectId) {
+        final var result = this.create(entity);
+        result.thenAccept(task -> addToProject(task, projectId));
+        return result;
+    }
+
+    private void addToProject(Task task, Long projectId) {
+        final var project = this.projectRepository.findById(projectId).orElseThrow(() -> new EntryNotFoundException(projectId));
+        project.getTasks().add(task);
+        this.projectRepository.save(project);
+    }
+
+    private CompletableFuture<Task> create(Task entity) {
+        entity.setCreatedDate(LocalDateTime.now());
+        entity.setLastModifiedDate(LocalDateTime.now());
+        return CompletableFuture.completedFuture(taskRepository.save(entity));
     }
 }

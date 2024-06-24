@@ -43,21 +43,6 @@ public final class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public CompletableFuture<Team> create(Team entity) {
-        return this.exists(entity).thenCompose(exists -> {
-
-            if (exists) {
-                final var found = teamRepository.findOne(Example.of(entity, modelMatcher));
-                if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
-            }
-
-            entity.setCreatedDate(LocalDateTime.now());
-            entity.setLastModifiedDate(LocalDateTime.now());
-            return CompletableFuture.completedFuture(teamRepository.save(entity));
-        });
-    }
-
-    @Override
     public CompletableFuture<Team> update(Team updatedEntity) {
         CompletableFuture<Team> future = new CompletableFuture<>();
         final var id = updatedEntity.getId();
@@ -95,42 +80,9 @@ public final class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public CompletableFuture<Optional<Team>> addToOrganisation(Long id, Long organisationId) {
-        final var organisation = this.organisationRepository.findById(organisationId);
-        if (organisation.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
-
-        final var entry = teamRepository.findById(id);
-        if (entry.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
-
-        entry.get().setOrganisation(organisation.get());
-        final var updatedTeam = teamRepository.save(entry.get());
-        return CompletableFuture.completedFuture(Optional.of(updatedTeam));
-    }
-
-    @Override
-    public CompletableFuture<Optional<Team>> addProject(Long id, Long projectId) {
-        final var project = this.projectRepository.findById(projectId);
-        if (project.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
-
-        final var entry = teamRepository.findById(id);
-        if (entry.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
-
-        entry.get().getProjects().add(project.get());
-        final var updatedTeam = teamRepository.save(entry.get());
-        return CompletableFuture.completedFuture(Optional.of(updatedTeam));
-    }
-
-    @Override
-    public CompletableFuture<Optional<Team>> addTopic(Long id, Long topicId) {
-        final var topic = this.topicRepository.findById(topicId);
-        if (topic.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
-
-        final var entry = teamRepository.findById(id);
-        if (entry.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
-
-        entry.get().getTopics().add(topic.get());
-        final var updatedTeam = teamRepository.save(entry.get());
-        return CompletableFuture.completedFuture(Optional.of(updatedTeam));
+    public CompletableFuture<Team> create(Team entity, Long organisationId) {
+        final var result = this.create(entity);
+        return result.thenApply(team -> addToOrganisation(team, organisationId));
     }
 
     @Override
@@ -145,6 +97,25 @@ public final class TeamServiceImpl implements TeamService {
         final var optionalTeam = teamRepository.findById(id);
         if (optionalTeam.isEmpty()) throw new EntryNotFoundException(id);
         return CompletableFuture.completedFuture(optionalTeam.get().getTopics().stream().toList());
+    }
 
+    private CompletableFuture<Team> create(Team entity) {
+        return this.exists(entity).thenCompose(exists -> {
+
+            if (exists) {
+                final var found = teamRepository.findOne(Example.of(entity, modelMatcher));
+                if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
+            }
+
+            entity.setCreatedDate(LocalDateTime.now());
+            entity.setLastModifiedDate(LocalDateTime.now());
+            return CompletableFuture.completedFuture(teamRepository.save(entity));
+        });
+    }
+
+    private Team addToOrganisation(Team team, Long organisationId) {
+        final var organisation = this.organisationRepository.findById(organisationId).orElseThrow(() -> new EntryNotFoundException(organisationId));
+        team.setOrganisation(organisation);
+        return teamRepository.save(team);
     }
 }
