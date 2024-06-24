@@ -1,6 +1,5 @@
 package com.marraph.iris.controller;
 
-import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Project;
 import com.marraph.iris.model.organisation.Team;
 import com.marraph.iris.model.task.Topic;
@@ -26,30 +25,9 @@ public final class TeamController extends AbstractController<Team> {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping("/set/organisation/{id}:{organisationId}")
-    public CompletableFuture<ResponseEntity<Team>> setOrganisation(@PathVariable Long id, @PathVariable Long organisationId) {
-        return teamService.addToOrganisation(id, organisationId).thenApply(team -> {
-            if (team.isEmpty()) throw new EntryNotFoundException();
-            else return ResponseEntity.ok(team.get());
-        });
-    }
-
-    @CrossOrigin(origins = "*")
-    @PostMapping("/add/project/{id}:{projectId}")
-    public CompletableFuture<ResponseEntity<Team>> addProject(@PathVariable Long id, @PathVariable Long projectId) {
-        return teamService.addProject(id, projectId).thenApply(team -> {
-            if (team.isEmpty()) throw new EntryNotFoundException();
-            else return ResponseEntity.ok(team.get());
-        });
-    }
-
-    @CrossOrigin(origins = "*")
-    @PostMapping("/add/topic/{id}:{topicId}")
-    public CompletableFuture<ResponseEntity<Team>> addTopic(@PathVariable Long id, @PathVariable Long topicId) {
-        return teamService.addTopic(id, topicId).thenApply(team -> {
-            if (team.isEmpty()) throw new EntryNotFoundException();
-            else return ResponseEntity.ok(team.get());
-        });
+    @PostMapping("/create")
+    public CompletableFuture<ResponseEntity<Team>> createEntity(@RequestBody Team entity, @RequestBody Long organisationId) {
+        return this.teamService.create(entity, organisationId).thenApply(ResponseEntity::ok);
     }
 
     @CrossOrigin(origins = "*")

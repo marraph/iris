@@ -23,11 +23,8 @@ public final class ProjectController extends AbstractController<Project> {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping("/add/task/{id}:{taskId}")
-    public CompletableFuture<ResponseEntity<Project>> addProject(@PathVariable Long id, @PathVariable Long taskId) {
-        return projectService.addTask(id, taskId).thenApply(project -> {
-            if (project.isEmpty()) throw new EntryNotFoundException();
-            else return ResponseEntity.ok(project.get());
-        });
+    @PostMapping("/create")
+    public CompletableFuture<ResponseEntity<Project>> createEntity(@RequestBody Project entity, @RequestBody Long teamId) {
+        return this.projectService.create(entity, teamId).thenApply(ResponseEntity::ok);
     }
 }

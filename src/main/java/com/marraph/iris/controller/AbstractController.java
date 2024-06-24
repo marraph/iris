@@ -16,12 +16,6 @@ public abstract class AbstractController<T> {
     }
 
     @CrossOrigin(origins = "*")
-    @PostMapping("/create")
-    public CompletableFuture<ResponseEntity<T>> createEntity(@RequestBody T entity) {
-        return service.create(entity).thenApply(ResponseEntity::ok);
-    }
-
-    @CrossOrigin(origins = "*")
     @PutMapping("/update/")
     public CompletableFuture<ResponseEntity<T>> updateEntity(@RequestBody T entity) {
         return service.update(entity).thenApply(ResponseEntity::ok);
