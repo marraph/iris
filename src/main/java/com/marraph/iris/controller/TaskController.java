@@ -1,6 +1,7 @@
 package com.marraph.iris.controller;
 
 import com.marraph.iris.model.task.Task;
+import com.marraph.iris.model.wrapper.TaskCreation;
 import com.marraph.iris.service.plain.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public final class TaskController extends AbstractController<Task> {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/create")
-    public CompletableFuture<ResponseEntity<Task>> createEntity(@RequestBody Task entity, @RequestBody Long projectId) {
-        return this.taskService.create(entity, projectId).thenApply(ResponseEntity::ok);
+    public CompletableFuture<ResponseEntity<Task>> createEntity(@RequestBody TaskCreation entity) {
+        return this.taskService.create(entity.task(), entity.projectId()).thenApply(ResponseEntity::ok);
     }
 }

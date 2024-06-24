@@ -3,6 +3,7 @@ package com.marraph.iris.controller;
 import com.marraph.iris.model.organisation.Project;
 import com.marraph.iris.model.organisation.Team;
 import com.marraph.iris.model.task.Topic;
+import com.marraph.iris.model.wrapper.TeamCreation;
 import com.marraph.iris.service.plain.organisation.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,8 @@ public final class TeamController extends AbstractController<Team> {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/create")
-    public CompletableFuture<ResponseEntity<Team>> createEntity(@RequestBody Team entity, @RequestBody Long organisationId) {
-        return this.teamService.create(entity, organisationId).thenApply(ResponseEntity::ok);
+    public CompletableFuture<ResponseEntity<Team>> createEntity(@RequestBody TeamCreation entity) {
+        return this.teamService.create(entity.team(), entity.organisationId()).thenApply(ResponseEntity::ok);
     }
 
     @CrossOrigin(origins = "*")

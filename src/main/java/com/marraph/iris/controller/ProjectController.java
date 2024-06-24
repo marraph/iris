@@ -2,6 +2,7 @@ package com.marraph.iris.controller;
 
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Project;
+import com.marraph.iris.model.wrapper.ProjectCreation;
 import com.marraph.iris.service.plain.organisation.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public final class ProjectController extends AbstractController<Project> {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/create")
-    public CompletableFuture<ResponseEntity<Project>> createEntity(@RequestBody Project entity, @RequestBody Long teamId) {
-        return this.projectService.create(entity, teamId).thenApply(ResponseEntity::ok);
+    public CompletableFuture<ResponseEntity<Project>> createEntity(@RequestBody ProjectCreation entity) {
+        return this.projectService.create(entity.project(), entity.teamId()).thenApply(ResponseEntity::ok);
     }
 }

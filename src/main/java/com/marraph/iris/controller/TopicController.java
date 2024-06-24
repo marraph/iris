@@ -1,6 +1,7 @@
 package com.marraph.iris.controller;
 
 import com.marraph.iris.model.task.Topic;
+import com.marraph.iris.model.wrapper.TopicCreation;
 import com.marraph.iris.service.plain.task.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public final class TopicController extends AbstractController<Topic> {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/create")
-    public CompletableFuture<ResponseEntity<Topic>> createEntity(@RequestBody Topic entity, @RequestBody Long teamId) {
-        return this.topicService.create(entity, teamId).thenApply(ResponseEntity::ok);
+    public CompletableFuture<ResponseEntity<Topic>> createEntity(@RequestBody TopicCreation entity) {
+        return this.topicService.create(entity.topic(), entity.teamId()).thenApply(ResponseEntity::ok);
     }
 }
