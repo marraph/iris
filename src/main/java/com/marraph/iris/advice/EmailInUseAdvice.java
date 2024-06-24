@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public final class EmailInUseAdvice {
 
-
     @ResponseBody
     @ExceptionHandler(EmailInUseException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

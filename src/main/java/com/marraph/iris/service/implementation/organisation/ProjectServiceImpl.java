@@ -96,11 +96,9 @@ public final class ProjectServiceImpl implements ProjectService {
     }
 
     public void addProject(Project project, Long teamId) {
-        final var entry = teamRepository.findById(teamId);
-        if (entry.isEmpty()) throw new ConnectEntryException("Team not found");
-
-        entry.get().getProjects().add(project);
-        teamRepository.save(entry.get());
+        final var entry = teamRepository.findById(teamId).orElseThrow(() -> new ConnectEntryException("Team not found"));
+        entry.getProjects().add(project);
+        teamRepository.save(entry);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.marraph.iris.service.implementation.task;
 
+import com.marraph.iris.exception.ConnectEntryException;
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Team;
 import com.marraph.iris.model.task.Topic;
@@ -97,7 +98,7 @@ public final class TopicServiceImpl implements TopicService {
     }
 
     private void addToTeam(Topic topic, Long teamId) {
-        final var team = this.teamRepository.findById(teamId).orElseThrow(() -> new EntryNotFoundException(teamId));
+        final var team = this.teamRepository.findById(teamId).orElseThrow(() -> new ConnectEntryException("Can't find team with id: " + teamId));
         team.getTopics().add(topic);
         this.teamRepository.save(team);
     }

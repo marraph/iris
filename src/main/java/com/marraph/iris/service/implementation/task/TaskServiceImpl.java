@@ -1,10 +1,10 @@
 package com.marraph.iris.service.implementation.task;
 
+import com.marraph.iris.exception.ConnectEntryException;
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.task.Task;
 import com.marraph.iris.repository.ProjectRepository;
 import com.marraph.iris.repository.TaskRepository;
-import com.marraph.iris.repository.UserRepository;
 import com.marraph.iris.service.plain.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -88,7 +88,7 @@ public final class TaskServiceImpl implements TaskService {
     }
 
     private void addToProject(Task task, Long projectId) {
-        final var project = this.projectRepository.findById(projectId).orElseThrow(() -> new EntryNotFoundException(projectId));
+        final var project = this.projectRepository.findById(projectId).orElseThrow(() -> new ConnectEntryException("Can't find team with id: " + projectId));
         project.getTasks().add(task);
         this.projectRepository.save(project);
     }

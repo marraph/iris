@@ -1,5 +1,6 @@
 package com.marraph.iris.service.implementation.organisation;
 
+import com.marraph.iris.exception.ConnectEntryException;
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Project;
 import com.marraph.iris.model.organisation.Team;
@@ -114,7 +115,7 @@ public final class TeamServiceImpl implements TeamService {
     }
 
     private Team addToOrganisation(Team team, Long organisationId) {
-        final var organisation = this.organisationRepository.findById(organisationId).orElseThrow(() -> new EntryNotFoundException(organisationId));
+        final var organisation = this.organisationRepository.findById(organisationId).orElseThrow(() -> new ConnectEntryException("Can't find organisation with id: " + organisationId));
         team.setOrganisation(organisation);
         return teamRepository.save(team);
     }
