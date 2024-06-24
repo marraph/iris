@@ -1,5 +1,6 @@
 package com.marraph.iris.service.implementation.organisation;
 
+import com.marraph.iris.exception.ConnectEntryException;
 import com.marraph.iris.exception.EmailInUseException;
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.User;
@@ -106,16 +107,13 @@ public final class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CompletableFuture<Optional<User>> addToTeam(Long id, Long teamId) {
-        final var team = teamRepository.findById(teamId);
-        if (team.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+    public CompletableFuture<User> addToTeam(Long userId, Long teamId) {
+        final var team = teamRepository.findById(teamId).orElseThrow(() -> new ConnectEntryException("Can't find team with id: " + teamId));
+        final var user = userRepository.findById(userId).orElseThrow(() -> new ConnectEntryException("Can't find team with id: " + userId));
 
-        final var user = userRepository.findById(id);
-        if (user.isEmpty()) return CompletableFuture.completedFuture(Optional.empty());
+        user.getTeams().add(team);
+        final var updatedUser = userRepository.save(user);
 
-        user.get().getTeams().add(team.get());
-        final var updatedUser = userRepository.save(user.get());
-
-        return CompletableFuture.completedFuture(Optional.of(updatedUser));
+        return CompletableFuture.completedFuture(updatedUser);
     }
 }

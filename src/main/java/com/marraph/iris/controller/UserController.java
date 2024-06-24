@@ -1,7 +1,5 @@
 package com.marraph.iris.controller;
 
-import com.marraph.iris.exception.EntryNotFoundException;
-import com.marraph.iris.model.organisation.Team;
 import com.marraph.iris.model.organisation.User;
 import com.marraph.iris.service.plain.organisation.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +30,6 @@ public final class UserController extends AbstractController<User> {
     @CrossOrigin(origins = "*")
     @PostMapping("/add/{id}:{teamId}")
     public CompletableFuture<ResponseEntity<User>> addToTeam(@PathVariable Long id, @PathVariable Long teamId) {
-        return userService.addToTeam(id, teamId).thenApply(user -> {
-            if (user.isEmpty()) throw new EntryNotFoundException();
-            else return ResponseEntity.ok(user.get());
-        });
+        return userService.addToTeam(id, teamId).thenApply(ResponseEntity::ok);
     }
 }
