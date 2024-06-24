@@ -30,6 +30,8 @@ public final class Task extends Auditable {
     @Column(nullable = false)
     private Float duration;
 
+    private Float bookedDuration;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
     @Column(nullable = false)
     private LocalDateTime deadline;
