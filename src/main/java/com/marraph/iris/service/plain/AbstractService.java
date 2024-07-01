@@ -3,7 +3,6 @@ package com.marraph.iris.service.plain;
 import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public interface AbstractService <T> {
@@ -12,7 +11,7 @@ public interface AbstractService <T> {
     CompletableFuture<T> update(T updatedEntity);
 
     @Async
-    CompletableFuture<Optional<T>> getById(Long id);
+    CompletableFuture<T> getById(Long id);
 
     @Async
     CompletableFuture<List<T>> getAll();

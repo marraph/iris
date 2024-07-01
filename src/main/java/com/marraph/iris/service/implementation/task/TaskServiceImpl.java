@@ -5,37 +5,35 @@ import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.task.Task;
 import com.marraph.iris.repository.ProjectRepository;
 import com.marraph.iris.repository.TaskRepository;
+import com.marraph.iris.service.implementation.AbstractServiceImpl;
 import com.marraph.iris.service.plain.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
 @Service
-public final class TaskServiceImpl implements TaskService {
+public final class TaskServiceImpl extends AbstractServiceImpl<Task> implements TaskService {
 
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
-    private final ExampleMatcher modelMatcher;
 
     @Autowired
     public TaskServiceImpl(TaskRepository taskRepository, ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
-        this.taskRepository = taskRepository;
-
-        this.modelMatcher = ExampleMatcher.matching()
+        super(taskRepository, ExampleMatcher.matching()
                 .withIgnorePaths("id")
                 .withIgnorePaths("topics")
                 .withIgnorePaths("topic_id")
                 .withMatcher("name", ignoreCase())
-                .withMatcher("description", ignoreCase());
+                .withMatcher("description", ignoreCase())
+        );
+
+        this.projectRepository = projectRepository;
+        this.taskRepository = taskRepository;
     }
 
     @Override
@@ -56,28 +54,6 @@ public final class TaskServiceImpl implements TaskService {
 
         future.complete(entry);
         return future;
-    }
-
-    @Override
-    public CompletableFuture<Optional<Task>> getById(Long id) {
-        return CompletableFuture.completedFuture(taskRepository.findById(id).or(() -> {
-            throw new EntryNotFoundException(id);
-        }));
-    }
-
-    @Override
-    public CompletableFuture<List<Task>> getAll() {
-        return CompletableFuture.completedFuture(taskRepository.findAll());
-    }
-
-    @Override
-    public void delete(Long id) {
-        taskRepository.deleteById(id);
-    }
-
-    @Override
-    public CompletableFuture<Boolean> exists(Task entity) {
-        return CompletableFuture.completedFuture(taskRepository.exists(Example.of(entity, modelMatcher)));
     }
 
     @Override

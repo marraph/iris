@@ -11,7 +11,7 @@ class IrisApplicationTests {
 	}
 
 	@Test
-	void runAllTests() throws Exception {
+	void runAllTests() {
 	}
 
 }

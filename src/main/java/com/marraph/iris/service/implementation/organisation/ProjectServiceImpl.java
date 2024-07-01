@@ -5,6 +5,7 @@ import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Project;
 import com.marraph.iris.repository.ProjectRepository;
 import com.marraph.iris.repository.TeamRepository;
+import com.marraph.iris.service.implementation.AbstractServiceImpl;
 import com.marraph.iris.service.plain.organisation.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -19,20 +20,20 @@ import java.util.concurrent.CompletableFuture;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
 @Service
-public final class ProjectServiceImpl implements ProjectService {
+public final class ProjectServiceImpl extends AbstractServiceImpl<Project> implements ProjectService {
 
     private final ProjectRepository projectRepository;
     private final TeamRepository teamRepository;
-    private final ExampleMatcher modelMatcher;
 
     @Autowired
     public ProjectServiceImpl(ProjectRepository projectRepository, TeamRepository teamRepository) {
+        super(projectRepository, ExampleMatcher.matching()
+                .withIgnorePaths("id")
+                .withMatcher("name", ignoreCase())
+        );
+
         this.projectRepository = projectRepository;
         this.teamRepository = teamRepository;
-
-        this.modelMatcher = ExampleMatcher.matching()
-                .withIgnorePaths("id")
-                .withMatcher("name", ignoreCase());
     }
 
     @Override
@@ -52,28 +53,6 @@ public final class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public CompletableFuture<Optional<Project>> getById(Long id) {
-        return CompletableFuture.completedFuture(projectRepository.findById(id).or(() -> {
-            throw new EntryNotFoundException(id);
-        }));
-    }
-
-    @Override
-    public CompletableFuture<List<Project>> getAll() {
-        return CompletableFuture.completedFuture(projectRepository.findAll());
-    }
-
-    @Override
-    public void delete(Long id) {
-        projectRepository.deleteById(id);
-    }
-
-    @Override
-    public CompletableFuture<Boolean> exists(Project entity) {
-        return CompletableFuture.completedFuture(projectRepository.exists(Example.of(entity, modelMatcher)));
-    }
-
-    @Override
     public CompletableFuture<Project> create(Project entity, Long teamId) {
         final var result = this.create(entity);
 
@@ -85,7 +64,7 @@ public final class ProjectServiceImpl implements ProjectService {
         return this.exists(entity).thenCompose(exists -> {
 
             if (exists) {
-                final var found = projectRepository.findOne(Example.of(entity, modelMatcher));
+                final var found = projectRepository.findOne(Example.of(entity, getExampleMatcher()));
                 if (found.isPresent()) return CompletableFuture.completedFuture(entity);
             }
 

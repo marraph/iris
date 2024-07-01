@@ -6,6 +6,7 @@ import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.User;
 import com.marraph.iris.repository.TeamRepository;
 import com.marraph.iris.repository.UserRepository;
+import com.marraph.iris.service.implementation.AbstractServiceImpl;
 import com.marraph.iris.service.plain.organisation.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -19,22 +20,22 @@ import java.util.concurrent.CompletableFuture;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
 @Service
-public final class UserServiceImpl implements UserService {
+public final class UserServiceImpl extends AbstractServiceImpl<User> implements UserService {
 
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
-    private final ExampleMatcher modelMatcher;
     private final ExampleMatcher emailMatcher;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, TeamRepository teamRepository) {
-        this.userRepository = userRepository;
-        this.teamRepository = teamRepository;
-
-        this.modelMatcher = ExampleMatcher.matching()
+        super(userRepository, ExampleMatcher.matching()
                 .withIgnorePaths("id")
                 .withMatcher("username", ignoreCase())
-                .withMatcher("email", ignoreCase());
+                .withMatcher("email", ignoreCase())
+        );
+
+        this.userRepository = userRepository;
+        this.teamRepository = teamRepository;
 
         this.emailMatcher = ExampleMatcher.matching()
                 .withIgnorePaths("id")
@@ -51,7 +52,7 @@ public final class UserServiceImpl implements UserService {
         return this.exists(entity).thenCompose(exists -> {
 
             if (!exists) {
-                final var found = userRepository.findOne(Example.of(entity, modelMatcher));
+                final var found = userRepository.findOne(Example.of(entity, getExampleMatcher()));
                 if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
             }
 
@@ -77,28 +78,6 @@ public final class UserServiceImpl implements UserService {
 
         future.complete(entry);
         return future;
-    }
-
-    @Override
-    public CompletableFuture<Optional<User>> getById(Long id) {
-        return CompletableFuture.completedFuture(userRepository.findById(id).or(() -> {
-            throw new EntryNotFoundException(id);
-        }));
-    }
-
-    @Override
-    public CompletableFuture<List<User>> getAll() {
-        return CompletableFuture.completedFuture(userRepository.findAll());
-    }
-
-    @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
-    }
-
-    @Override
-    public CompletableFuture<Boolean> exists(User entity) {
-        return CompletableFuture.completedFuture(userRepository.exists(Example.of(entity, modelMatcher)));
     }
 
     @Override

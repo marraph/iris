@@ -9,6 +9,7 @@ import com.marraph.iris.repository.OrganisationRepository;
 import com.marraph.iris.repository.ProjectRepository;
 import com.marraph.iris.repository.TeamRepository;
 import com.marraph.iris.repository.TopicRepository;
+import com.marraph.iris.service.implementation.AbstractServiceImpl;
 import com.marraph.iris.service.plain.organisation.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -23,24 +24,20 @@ import java.util.concurrent.CompletableFuture;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
 @Service
-public final class TeamServiceImpl implements TeamService {
+public final class TeamServiceImpl extends AbstractServiceImpl<Team> implements TeamService {
 
     private final OrganisationRepository organisationRepository;
-    private final ProjectRepository projectRepository;
-    private final TopicRepository topicRepository;
     private final TeamRepository teamRepository;
-    private final ExampleMatcher modelMatcher;
 
     @Autowired
     public TeamServiceImpl(TeamRepository teamRepository, OrganisationRepository organisationRepository, ProjectRepository projectRepository, TopicRepository topicRepository) {
-        this.organisationRepository = organisationRepository;
-        this.projectRepository = projectRepository;
-        this.topicRepository = topicRepository;
-        this.teamRepository = teamRepository;
-
-        this.modelMatcher = ExampleMatcher.matching()
+        super(teamRepository, ExampleMatcher.matching()
                 .withIgnorePaths("id")
-                .withMatcher("name", ignoreCase());
+                .withMatcher("name", ignoreCase())
+        );
+
+        this.organisationRepository = organisationRepository;
+        this.teamRepository = teamRepository;
     }
 
     @Override
@@ -56,28 +53,6 @@ public final class TeamServiceImpl implements TeamService {
 
         future.complete(entry);
         return future;
-    }
-
-    @Override
-    public CompletableFuture<Optional<Team>> getById(Long id) {
-        return CompletableFuture.completedFuture(teamRepository.findById(id).or(() -> {
-            throw new EntryNotFoundException(id);
-        }));
-    }
-
-    @Override
-    public CompletableFuture<List<Team>> getAll() {
-        return CompletableFuture.completedFuture(teamRepository.findAll());
-    }
-
-    @Override
-    public void delete(Long id) {
-        teamRepository.deleteById(id);
-    }
-
-    @Override
-    public CompletableFuture<Boolean> exists(Team entity) {
-        return CompletableFuture.completedFuture(teamRepository.exists(Example.of(entity, modelMatcher)));
     }
 
     @Override
@@ -104,7 +79,7 @@ public final class TeamServiceImpl implements TeamService {
         return this.exists(entity).thenCompose(exists -> {
 
             if (exists) {
-                final var found = teamRepository.findOne(Example.of(entity, modelMatcher));
+                final var found = teamRepository.findOne(Example.of(entity, getExampleMatcher()));
                 if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
             }
 

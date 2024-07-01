@@ -3,6 +3,7 @@ package com.marraph.iris.service.implementation.organisation;
 import com.marraph.iris.exception.EntryNotFoundException;
 import com.marraph.iris.model.organisation.Organisation;
 import com.marraph.iris.repository.OrganisationRepository;
+import com.marraph.iris.service.implementation.AbstractServiceImpl;
 import com.marraph.iris.service.plain.organisation.OrganisationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -10,23 +11,23 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
 
 @Service
-public final class OrganisationServiceImpl implements OrganisationService {
+public final class OrganisationServiceImpl extends AbstractServiceImpl<Organisation> implements OrganisationService {
 
     private final OrganisationRepository organisationRepository;
-    private final ExampleMatcher modelMatcher;
 
     @Autowired
     public OrganisationServiceImpl(OrganisationRepository organisationRepository) {
-        this.organisationRepository = organisationRepository;
+        super(organisationRepository, ExampleMatcher.matching()
+                .withIgnorePaths("id")
+                .withMatcher("name", ignoreCase())
+        );
 
-        this.modelMatcher = ExampleMatcher.matching().withIgnorePaths("id").withMatcher("name", ignoreCase());
+        this.organisationRepository = organisationRepository;
     }
 
     @Override
@@ -34,7 +35,7 @@ public final class OrganisationServiceImpl implements OrganisationService {
         return this.exists(entity).thenCompose(exists -> {
 
             if (exists) {
-                final var found = organisationRepository.findOne(Example.of(entity, modelMatcher));
+                final var found = organisationRepository.findOne(Example.of(entity, getExampleMatcher()));
                 if (found.isPresent()) return CompletableFuture.completedFuture(found.get());
             }
 
@@ -59,25 +60,4 @@ public final class OrganisationServiceImpl implements OrganisationService {
         return future;
     }
 
-    @Override
-    public CompletableFuture<Optional<Organisation>> getById(Long id) {
-        return CompletableFuture.completedFuture(organisationRepository.findById(id).or(() -> {
-            throw new EntryNotFoundException(id);
-        }));
-    }
-
-    @Override
-    public CompletableFuture<List<Organisation>> getAll() {
-        return CompletableFuture.completedFuture(organisationRepository.findAll());
-    }
-
-    @Override
-    public void delete(Long id) {
-        organisationRepository.deleteById(id);
-    }
-
-    @Override
-    public CompletableFuture<Boolean> exists(Organisation entity) {
-        return CompletableFuture.completedFuture(organisationRepository.exists(Example.of(entity, modelMatcher)));
-    }
 }
