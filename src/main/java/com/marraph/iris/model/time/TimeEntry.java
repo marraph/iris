@@ -19,9 +19,6 @@ import java.util.Date;
 public final class TimeEntry extends Auditable {
 
     @ManyToOne
-    private DailyEntry dailyEntry;
-
-    @ManyToOne
     private Task task;
 
     @ManyToOne
