@@ -2,7 +2,6 @@ package com.marraph.iris.service.implementation.task;
 
 import com.marraph.iris.exception.ConnectEntryException;
 import com.marraph.iris.exception.EntryNotFoundException;
-import com.marraph.iris.model.organisation.Team;
 import com.marraph.iris.model.task.Topic;
 import com.marraph.iris.repository.TeamRepository;
 import com.marraph.iris.repository.TopicRepository;
@@ -14,8 +13,6 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;

@@ -24,8 +24,7 @@ public abstract class AbstractController<T> {
     @CrossOrigin(origins = "*")
     @GetMapping("/get/{id}")
     public CompletableFuture<ResponseEntity<T>> getEntityById(@PathVariable Long id) {
-        return service.getById(id)
-                .thenApply(opt -> opt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build()));
+        return service.getById(id).thenApply(ResponseEntity::ok);
     }
 
     @CrossOrigin(origins = "*")
